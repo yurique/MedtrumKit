@@ -40,6 +40,8 @@ public class MedtrumPumpManager: DeviceManager {
         )
 
         bluetooth.pumpManager = self
+
+        log.info("MedtrumPumpManager created")
     }
 
     public required convenience init?(rawState: RawStateValue) {
@@ -178,12 +180,15 @@ public class MedtrumPumpManager: DeviceManager {
     private let backgroundTask = BackgroundTask()
     @objc func appMovedToBackground() {
         if state.useSilentTones {
-            log.info("Starting silent tones")
+            log.info("Moved to background - starting silent tones")
             backgroundTask.startBackgroundTask()
+        } else {
+            log.info("Moved to background - silent tones are disabled")
         }
     }
 
     @objc func appMovedToForeground() {
+        log.info("Moved to foreground")
         backgroundTask.stopBackgroundTask()
     }
 }
@@ -301,6 +306,10 @@ public extension MedtrumPumpManager {
     }
 
     func setMustProvideBLEHeartbeat(_ mustProvideBLEHeartbeat: Bool) {
+        if mustProvideBLEHeartbeat != self.mustProvideBLEHeartbeat {
+            log.info("must provide BLE heartbeat: \(mustProvideBLEHeartbeat)")
+        }
+
         self.mustProvideBLEHeartbeat = mustProvideBLEHeartbeat
     }
 

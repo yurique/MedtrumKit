@@ -278,7 +278,8 @@ extension PeripheralManager: CBPeripheralDelegate {
 
         if characteristic.uuid == CBUUID.READ_UUID {
             guard data[1] != 0x00 else {
-                // Ignore all ping messages from patch pomp
+                log.info("Ping from patch")
+                pumpManager.issueHeartbeatIfNeeded()
                 return
             }
 

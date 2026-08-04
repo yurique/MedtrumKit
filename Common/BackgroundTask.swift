@@ -4,6 +4,8 @@ import AVFoundation
 class BackgroundTask {
     // MARK: - Vars
 
+    private let log = MedtrumLogger(category: "BackgroundTask")
+
     var player = AVAudioPlayer()
     var timer = Timer()
 
@@ -29,6 +31,8 @@ class BackgroundTask {
             let info = notification.userInfo!
             var intValue = 0
             (info[AVAudioSessionInterruptionTypeKey]! as AnyObject).getValue(&intValue)
+
+            log.info("Audio session interruption: \(intValue == 1 ? "ended, restarting" : "began")")
             if intValue == 1 { playAudio() }
         }
     }
@@ -46,7 +50,10 @@ class BackgroundTask {
             player.volume = 0.01
             player.prepareToPlay()
             player.play()
-        } catch { print(error)
+
+            log.info("Silent tones playing: \(player.isPlaying)")
+        } catch {
+            log.error("Failed to start silent tones: \(error.localizedDescription)")
         }
     }
 }
